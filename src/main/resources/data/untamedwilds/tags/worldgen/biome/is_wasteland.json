@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "#untamedwilds:is_desert",
+    "#untamedwilds:is_badlands"
+  ]
+}

@@ -1,0 +1,67 @@
+package untamedwilds.util;
+
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import org.apache.logging.log4j.Level;
+import untamedwilds.UntamedWilds;
+import untamedwilds.init.ModItems;
+
+import java.util.Objects;
+
+@EventBusSubscriber(modid = UntamedWilds.MOD_ID)
+public class ModEntityRightClickEvent {
+
+    @SubscribeEvent
+    public static void modEntityRightClickEvent(PlayerInteractEvent.EntityInteract event) {
+    Player playerIn = event.getEntity();
+    Entity target = event.getTarget();
+    InteractionHand hand = event.getHand();
+        if (/*!event.getWorld().isClientSide && hand == InteractionHand.MAIN_HAND &&*/ playerIn.getItemInHand(InteractionHand.MAIN_HAND).getItem() == ModItems.OWNERSHIP_DEED.get()) {
+            ItemStack itemstack = playerIn.getItemInHand(hand);
+            if (target instanceof TamableAnimal) {
+                TamableAnimal entity_target = (TamableAnimal) target;
+                if (entity_target.isTame()) {
+            if (Objects.equals(entity_target.getOwnerUUID(), playerIn.getUUID()) && !itemstack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)) {
+                CompoundTag nbt = new CompoundTag();
+                nbt.putString("ownername", playerIn.getName().getString());
+                nbt.putString("entityname", entity_target.getName().getString());
+                nbt.putString("ownerid", playerIn.getUUID().toString());
+                nbt.putString("entityid", entity_target.getUUID().toString());
+                itemstack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(nbt));
+                        if (UntamedWilds.DEBUG) {
+                            UntamedWilds.LOGGER.log(Level.INFO, "Pet owner signed a deed for a " + entity_target.getName().getString());
+                        }
+                        event.setCanceled(true);
+                        event.setCancellationResult(InteractionResult.SUCCESS);
+                    }
+
+                    else {
+                        CompoundTag tag = itemstack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+                        if (tag != null) {
+                            if (entity_target.getOwnerUUID().toString().equals(tag.getString("ownerid")) && entity_target.getUUID().toString().equals(tag.getString("entityid"))) {
+                                entity_target.setOwnerUUID(playerIn.getUUID());
+                                if (!playerIn.isCreative()) {
+                                    itemstack.shrink(1);
+                                }
+                                if (UntamedWilds.DEBUG) {
+                                    UntamedWilds.LOGGER.log(Level.INFO, "Pet ownership transferred to " + playerIn.getName().getString());
+                                }
+                            }
+                            event.setCanceled(true);
+                            event.setCancellationResult(InteractionResult.SUCCESS);
+                        }
+                    }
+                }
+            }
+            event.setCancellationResult(InteractionResult.PASS);
+        }
+    }
+}

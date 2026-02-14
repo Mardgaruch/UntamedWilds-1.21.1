@@ -1,0 +1,101 @@
+package untamedwilds.item;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import untamedwilds.UntamedWilds;
+import untamedwilds.entity.ComplexMob;
+import untamedwilds.entity.INeedsPostUpdate;
+import untamedwilds.util.EntityUtils;
+import untamedwilds.util.ModCreativeModeTab;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Supplier;
+
+public class MobSpawnItem extends Item {
+    private final Supplier<? extends EntityType<?>> entity;
+
+    public MobSpawnItem(Supplier<? extends EntityType<?>> typeIn, Properties properties) {
+        super(properties);
+        this.entity = typeIn;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+        EntityUtils.buildTooltipData(stack, tooltip, this.entity.get(), EntityUtils.getVariantName(this.entity.get(), this.getSpecies(stack)));
+    }
+
+    public Component getName(ItemStack stack) {
+    return net.minecraft.network.chat.Component.translatable("entity.untamedwilds." + this.entity.get().builtInRegistryHolder().key().location().getPath() + "_" + EntityUtils.getVariantName(this.entity.get(), this.getSpecies(stack)));
+        //return new TranslatableComponent("entity.untamedwilds." + this.entity.getRegistryName().getPath() + "_" + ComplexMob.getEntityData(this.entity).getSpeciesData().get(this.getSpecies(stack)).getName()).getString();
+    }
+
+    @Override
+    public InteractionResult useOn(UseOnContext useContext) {
+
+        Level worldIn = useContext.getLevel();
+        if (!(worldIn instanceof ServerLevel)) {
+            return InteractionResult.SUCCESS;
+        } else {
+            ItemStack itemStack = useContext.getItemInHand();
+            BlockPos pos = useContext.getClickedPos();
+            Direction facing = useContext.getClickedFace();
+            BlockState blockState = worldIn.getBlockState(pos);
+            BlockPos spawnPos = blockState.getCollisionShape(worldIn, pos).isEmpty() ? pos : pos.relative(facing);
+
+            CompoundTag tag = itemStack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+            EntityType<?> entity = EntityUtils.getEntityTypeFromTag(tag, this.entity.get());
+            boolean doVerticalOffset = !Objects.equals(pos, spawnPos) && facing == Direction.UP;
+            EntityUtils.createMobFromItem((ServerLevel) worldIn, itemStack, entity, this.getSpecies(itemStack), spawnPos, useContext.getPlayer(), doVerticalOffset);
+
+            if (useContext.getPlayer() != null) {
+                if (!useContext.getPlayer().isCreative()) {
+                    itemStack.shrink(1);
+                }
+            }
+        }
+        return InteractionResult.CONSUME;
+    }
+
+    private int getSpecies(ItemStack itemIn) {
+        CompoundTag tag = itemIn.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+        if (tag != null && tag.contains("CustomModelData")) {
+            return tag.getInt("CustomModelData");
+        }
+        UntamedWilds.LOGGER.error("No variant found in this itemstack NBT data");
+        return 0;
+    }
+
+    public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
+        if (group == ModCreativeModeTab.UNTAMEDWILDS_ITEMS.get()) {
+            for(int i = 0; i < EntityUtils.getNumberOfSpecies(this.entity.get()); i++) {
+                CompoundTag baseTag = new CompoundTag();
+                ItemStack item = new ItemStack(this);
+                baseTag.putInt("variant", i);
+                baseTag.putInt("CustomModelData", i);
+                item.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(baseTag));
+                items.add(item);
+            }
+        }
+    }
+}

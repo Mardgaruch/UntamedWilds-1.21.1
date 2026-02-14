@@ -1,0 +1,60 @@
+package untamedwilds.config;
+
+import net.neoforged.neoforge.common.ModConfigSpec;
+
+public class ConfigGamerules {
+
+    public static ModConfigSpec.BooleanValue naturalBreeding;
+    public static ModConfigSpec.BooleanValue hardcoreBreeding;
+    public static ModConfigSpec.BooleanValue easyBreeding;
+    public static ModConfigSpec.BooleanValue genderedBreeding;
+    public static ModConfigSpec.BooleanValue hardcoreDeath;
+    public static ModConfigSpec.BooleanValue playerBreeding;
+    public static ModConfigSpec.BooleanValue randomSpecies;
+    public static ModConfigSpec.BooleanValue scientificNames;
+    public static ModConfigSpec.BooleanValue grazerGriefing;
+    public static ModConfigSpec.BooleanValue mobGriefing;
+    public static ModConfigSpec.BooleanValue angrySleepers;
+    public static ModConfigSpec.BooleanValue contactAgression;
+    public static ModConfigSpec.BooleanValue mobsLayEggs;
+    public static ModConfigSpec.BooleanValue spyglassBehaviorChange;
+    public static ModConfigSpec.IntValue spyglassCheckRange;
+    public static ModConfigSpec.BooleanValue sleepBehaviour;
+    public static ModConfigSpec.BooleanValue easyMobCapturing;
+    public static ModConfigSpec.IntValue cycleLength;
+    public static ModConfigSpec.DoubleValue rareSkinChance;
+    public static ModConfigSpec.BooleanValue wildRareSkins;
+    public static ModConfigSpec.BooleanValue attackUndead;
+
+    ConfigGamerules(final ModConfigSpec.Builder builder) {
+        builder.comment("Options pertaining to global Gamerules");
+
+        naturalBreeding = builder.comment("Defines whether animals should breed without Player intervention.").define("gamerules.natural_breeding", true);
+        hardcoreBreeding = builder.comment("Adds additional restrictions to mob breeding, including Biome/Temperature requirements and Overcrowding.").define("gamerules.hardcore_breeding", false);
+        easyBreeding = builder.comment("Pregnancy time is only used as a cooldown, babies pop out instantly like in Vanilla.").define("gamerules.easy_breeding", false);
+        genderedBreeding = builder.comment("Whether breeding requires a Male and a Female to produce offspring/eggs. (Warning: may lead to uncontrolled spawns of eggs)").define("gamerules.gendered_breeding", true);
+        playerBreeding = builder.comment("Defines whether players can trigger breeding by feeding a creature's favourite item, like in vanilla.").define("gamerules.player_breeding", false);
+
+        randomSpecies = builder.comment("Allows mobs to spawn as fully random species, ignoring Biomes and Rarity.").define("gamerules.random_species", false);
+        rareSkinChance = builder.comment("Chance for a mob, out of 1, to have it's Skin replaced by a Rare skin (if any are defined through assets)").defineInRange("gamerules.rare_skin_chance", 0.05, 0, 1);
+        wildRareSkins = builder.comment("Should mobs with Rare skins generate in the wild (if defined through assets)").define("gamerules.wild_rare_skins", true);
+        spyglassBehaviorChange = builder.comment("Should the vanilla Spyglass display information when a player looks at a mob. Set to false to disable.").define("gamerules.spyglass_behavior_change", true);
+        spyglassCheckRange = builder.comment("Range up to which the Spyglass will identify mobs and give information, this length is not in blocks, and is roughly equivalent to a Render distance of 12.").defineInRange("gamerules.spyglass_range", 5000, 0, Integer.MAX_VALUE);
+
+        hardcoreDeath = builder.comment("Disable this option to have tamed mobs respawn in their home with half a Heart if they were to 'die' (IMPORTANT: This gamerule is NOT fully functional and using it as a free get-out-of-jail card is bound to be disappointing, use at your own risk).").define("gamerules.hardcore_death", true);
+        scientificNames = builder.comment("Features scientific names in various descriptions (eg. for mobs inside Cage Traps).").define("gamerules.scientific_names", true);
+        grazerGriefing = builder.comment("Should 'Grazing' mobs destroy Tall Grass and/or turn Grass into dirt blocks (like Vanilla Sheep do).").define("gamerules.grazer_griefing", true);
+        mobGriefing = builder.comment("Should mobs potentially destroy the terrain? Keep in mind 'mobGriefing' is still required").define("gamerules.mob_griefing", false);
+        mobsLayEggs = builder.comment("If set to false, prevents mobs from dropping eggs").define("gamerules.mobs_drop_eggs", false);
+
+        angrySleepers = builder.comment("Defines whether certain large predators will be angered if a player approaches them while they are sleeping.").define("gamerules.angry_sleepers", true);
+        contactAgression = builder.comment("Defines whether certain critters will become angry if a mob/player 'steps' on them, by coming too close.").define("gamerules.contact_agression", true);
+        attackUndead = builder.comment("Defines whether animals should actively target and hunt Undead mobs. Disabling this option should make mobs less prone to dying due to angering a Zombie horde").define("gamerules.attack_undead", true);
+
+        sleepBehaviour = builder.comment("Should the 'Sleeping' behaviour run? Disabling this option also disables the activity").define("gamerules.mob_sleeping", true);
+        easyMobCapturing = builder.comment("If set to false, makes mobs a lot harder to catch by preventing the capture of hostile mobs").define("gamerules.easy_mob_capture", true);
+
+    cycleLength = builder.comment("Defines how long a cycle should last, cycles are used to scale the gestation and breeding periods. Example values: 24000 - Day, 168000 - Week, 720000 - Month, 8760000 - Year").defineInRange("gamerules.cycle_length", 24000, 0, 8760000);
+
+    }
+}

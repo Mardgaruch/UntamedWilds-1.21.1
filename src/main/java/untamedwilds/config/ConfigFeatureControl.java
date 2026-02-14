@@ -1,0 +1,76 @@
+package untamedwilds.config;
+
+import com.google.common.collect.Lists;
+import net.neoforged.neoforge.common.ModConfigSpec;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+public class ConfigFeatureControl {
+
+    public static ModConfigSpec.BooleanValue addAnemones;
+    public static ModConfigSpec.BooleanValue addReeds;
+    public static ModConfigSpec.BooleanValue addFlora;
+    public static ModConfigSpec.BooleanValue addAlgae;
+    public static ModConfigSpec.BooleanValue addTreeOrchids;
+    public static ModConfigSpec.BooleanValue addBurrows;
+
+    public static ModConfigSpec.ConfigValue<List<? extends String>> reedBlacklist;
+    public static ModConfigSpec.ConfigValue<List<? extends String>> floraBlacklist;
+    public static ModConfigSpec.ConfigValue<List<? extends String>> algaeBlacklist;
+
+    public static ModConfigSpec.IntValue freqReeds;
+    public static ModConfigSpec.IntValue freqFlora;
+    public static ModConfigSpec.IntValue freqAlgae;
+
+    public static ModConfigSpec.IntValue freqCritter;
+    public static ModConfigSpec.IntValue freqWater;
+    public static ModConfigSpec.IntValue freqSessile;
+    public static ModConfigSpec.IntValue freqOcean;
+    public static ModConfigSpec.IntValue freqApex;
+    public static ModConfigSpec.IntValue freqHerbivores;
+    public static ModConfigSpec.IntValue probUnderground;
+
+    public static ModConfigSpec.ConfigValue<List<? extends String>> dimensionFeatureBlacklist;
+    public static HashMap<String, ModConfigSpec.BooleanValue> options = new HashMap<>();
+
+    private final ModConfigSpec.Builder builder;
+
+    ConfigFeatureControl(final ModConfigSpec.Builder builder) {
+        //builder.push("feature_control");
+        this.builder = builder;
+        builder.comment("Options pertaining to blocks and their world generation");
+        addAnemones = define("gencontrol.anemone", true, "Controls whether to add Anemones and their associated items to oceans.");
+        addReeds = define("gencontrol.reeds", true, "Controls whether to spawn Reeds in River/Swamp biomes");
+        addFlora = define("gencontrol.bush", true, "Controls whether to spawn random Flora in the world");
+        addTreeOrchids = define("gencontrol.tree_orchid", true, "Controls whether to add Tree Orchids (NOT YET IMPLEMENTED)");
+        addAlgae = define("gencontrol.algae", true, "Controls whether to spawn Amazon Sword in Swamp/Jungle biomes");
+        addBurrows = define("gencontrol.burrows", true, "Controls whether to use Burrows to spawn Critters, if disabled, Critters will spawn in the world like normal mobs.");
+
+    reedBlacklist = builder.comment("Prevent spawns of Reeds in these biomes").defineList("gencontrol.reed_blacklist", Lists.newArrayList(), o -> o instanceof String);
+        freqReeds = builder.comment("Frequency of Reeds, 1 in N chunks will generate Reeds (0 to disable)").defineInRange("gencontrol.freqreeds", 4, 0, Integer.MAX_VALUE);
+    floraBlacklist = builder.comment("Prevent spawns of Flora in these biomes").defineList("gencontrol.flora_blacklist", Lists.newArrayList(), o -> o instanceof String);
+        freqFlora = builder.comment("Frequency of Flora, 1 in N chunks will generate random Flora (0 to disable)").defineInRange("gencontrol.freqflora", 4, 0, Integer.MAX_VALUE);
+    algaeBlacklist = builder.comment("Prevent spawns of Algae in these biomes").defineList("gencontrol.algae_blacklist", Lists.newArrayList("minecraft:frozen_ocean", "minecraft:deep_frozen_ocean"), o -> o instanceof String);
+        freqAlgae = builder.comment("Frequency of Algae, abstract value (0 to disable)").defineInRange("gencontrol.freqalgae", 1, 0, Integer.MAX_VALUE);
+
+        freqCritter = builder.comment("Frequency of Critters, 1 in N chunks will generate with Critters (0 to disable)").defineInRange("gencontrol.freqcritter", 12, 0, Integer.MAX_VALUE);
+        freqSessile = builder.comment("Frequency of Sessile Ocean Mobs, 1 in N chunks will generate with Sessile Mobs (0 to disable)").defineInRange("gencontrol.freqsessile", 14, 0, Integer.MAX_VALUE);
+        freqOcean = builder.comment("Frequency of Ocean Mobs, 1 in N chunks will generate with Ocean Mobs (0 to disable)").defineInRange("gencontrol.freqocean", 28, 0, Integer.MAX_VALUE);
+        freqApex = builder.comment("Frequency of Apex Predators, 1 in N chunks will generate with an Apex Predator (0 to disable)").defineInRange("gencontrol.freqapex", 96, 0, Integer.MAX_VALUE);
+        freqHerbivores = builder.comment("Frequency of Herbivores, 1 in N chunks will generate with an Apex Predator (0 to disable)").defineInRange("gencontrol.freqherbivore", 72, 0, Integer.MAX_VALUE);
+        freqWater = builder.comment("Frequency of Freshwater Mobs, 1 in N chunks will generate with Freshwater Mobs (0 to disable)").defineInRange("gencontrol.freqwater", 14, 0, Integer.MAX_VALUE);
+        probUnderground = builder.comment("Frequency of Underground mobs, N attempts to spawn a mob will be made on each chunk (0 to disable)").defineInRange("gencontrol.probunderground", 2, 0, Integer.MAX_VALUE);
+
+    dimensionFeatureBlacklist = builder.comment("Prevent flora and other blocks (besides Burrows) from generating in the defined dimensions.").defineList("gencontrol.dimensionFeatureBlacklist", Lists.newArrayList(), o -> o instanceof String);
+        //builder.pop();
+    }
+
+    private ModConfigSpec.BooleanValue define(String name, boolean value, String comment) {
+        ModConfigSpec.BooleanValue option = builder.comment(comment).define(name, value);
+        options.put(name, option);
+        return option;
+    }
+}
