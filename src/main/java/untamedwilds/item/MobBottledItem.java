@@ -15,7 +15,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import untamedwilds.UntamedWilds;
 import untamedwilds.util.EntityUtils;
 import untamedwilds.entity.ComplexMob;
 import untamedwilds.util.ModCreativeModeTab;
@@ -77,7 +76,9 @@ public class MobBottledItem extends Item {
         if (tag != null && tag.contains("CustomModelData")) {
             return tag.getInt("CustomModelData");
         }
-        UntamedWilds.LOGGER.error("No variant found in this itemstack NBT data");
+        if (tag != null && tag.contains("variant")) {
+            return tag.getInt("variant");
+        }
         return 0;
     }
 
