@@ -32,5 +32,5 @@ import net.minecraft.world.level.Level;
 
     public static int getTicksInMonth(World world) {
         return SeasonHelper.getSeasonState(world).getSubSeasonDuration();
-    }*/
-}
+    }
+} */
