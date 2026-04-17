@@ -213,12 +213,12 @@ public abstract class ComplexMob extends TamableAnimal {
 
     public boolean wantsToBreed() {
         if (ConfigGamerules.naturalBreeding.get()) {
-            if (CompatBridge.SereneSeasons) {
+           /* if (CompatBridge.SereneSeasons) {
                 return CompatSereneSeasons.isCurrentSeason(this.level(), this.getBreedingSeason());
             }
             return true;
             //return this.isInLove();
-        }
+        } */
         return false;
     }
 
@@ -456,10 +456,10 @@ public abstract class ComplexMob extends TamableAnimal {
         }
 
         ItemStack itemstack = player.getItemInHand(hand);
-        if (!this.level().isClientSide()) {
-            if (!CompatBridge.Patchouli && player instanceof ServerPlayer serverPlayer) {
-                ModAdvancementTriggers.NO_PATCHOULI_LOADED.get().trigger(serverPlayer);
-            }
+        //if (!this.level().isClientSide()) {
+        //  if (!CompatBridge.Patchouli && player instanceof ServerPlayer serverPlayer) {
+        //    ModAdvancementTriggers.NO_PATCHOULI_LOADED.get().trigger(serverPlayer);
+        //   }
 
             // Highlight mobs in the same pack if Player is in Creative mode
             if (player.isCreative() && itemstack.isEmpty() && this instanceof IPackEntity && this.herd != null) {
