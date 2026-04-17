@@ -2,11 +2,11 @@ package untamedwilds.compat;
 
 import net.minecraft.world.level.Level;
 
-public class CompatSereneSeasons {
+/* public class CompatSereneSeasons {
     public static boolean isCurrentSeason(Level world, String string) {
         return true;
     }
-        /*ISeasonState data = SeasonHelper.getSeasonState(world);
+        ISeasonState data = SeasonHelper.getSeasonState(world);
         String season = data.getSeason().toString();
         if (string.equals("ALL")) {
             return true;
