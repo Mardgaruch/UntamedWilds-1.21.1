@@ -74,7 +74,7 @@ public class UntamedWilds {
         ModItems.registerSpawnItems();
 
         // Register compatibility
-        CompatBridge.RegisterCompat();
+        //CompatBridge.RegisterCompat();
     }
 
     private void setupCommon(final FMLCommonSetupEvent event) {
