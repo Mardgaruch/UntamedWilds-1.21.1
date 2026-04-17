@@ -6,7 +6,7 @@ import untamedwilds.UntamedWilds;
 import untamedwilds.config.ConfigModCompat;
 
 public class CompatBridge {
-
+/*
     private static final String SERENSEASONS_MODID = "sereneseasons";
     private static final String PATCHOULI_MODID = "patchouli";
 
@@ -22,5 +22,5 @@ public class CompatBridge {
             Patchouli = true;
             UntamedWilds.LOGGER.log(Level.INFO, "Loading compatibility module with Patchouli");
         }
-    }
+    } */
 }
